@@ -33,6 +33,7 @@ wgee<-function(model,data,id,family,corstr,scale=NULL,mismodel=NULL){
   fit=newton_raphson(id,x,y,weight=weight,scale=scale,corstr=corstr,family=family)
   beta_est=fit$beta_new
   rownames(beta_est)=colnames(x)
+
   scale=fit$phi
   rho=fit$rho
   res_list=lapply(1:length(unique(id)),function(m){
@@ -51,7 +52,22 @@ wgee<-function(model,data,id,family,corstr,scale=NULL,mismodel=NULL){
   mu_fit=exp(x%*%beta_est)/(1+exp(x%*%beta_est))
   se=sqrt(diag(variance))
   p_value=pchisq((beta_est/se)^2,1,lower.tail = F)
-  print(data.frame(est=beta_est,se=se,p_value=round(p_value,4)))
+  sig=rep(" ",length(p_value))
+  sig[p_value<=0.0001]="***"
+  sig[p_value>0.0001&p_value<=0.001]="**"
+  sig[p_value>0.001&p_value<=0.01]="*"
+  sig[p_value>0.01&p_value<=0.05]="."
+  summary_table=data.frame(est=beta_est,se=se,z_val=abs(beta_est)/se,p_value=p_value,sig)
+  colnames(summary_table)=c("Estimate", "Std. Error", "z value", "Pr(>|z|)","")
+  print(model)
+  cat("\n")
+  print(summary_table)
+  # cat("\n")
+  # print(mismodel)
+  # cat("\n")
+  # print(summary(mis_fit)$coefficients)
+  cat("---\n")
+  cat("Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 \n")
   final_res=list(beta=beta_est,var=var,mu_fit=mu_fit,scale=scale,rho=fit$rho,weight=weight,model=model,x=x,y=y,mis_fit=mis_fit)
-  return(final_res)
+  invisible(final_res)
 }

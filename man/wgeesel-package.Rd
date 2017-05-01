@@ -68,6 +68,6 @@ fit <- wgee (Y ~ Drug+Sex+Time,data=imps,id=imps$ID,family="binomial",
 #  mismodel= R ~ Drug+Time, data=imps,id=imps$ID, family="binomial",
 #  corstr="exchangeable")
   
-QICW.gee(Y ~ Drug+Sex+Time, mismodel= R ~ Drug+Time, data=imps, id=imps$ID,
-  family="binomial", corstr="exchangeable")
+#QICW.gee(Y ~ Drug+Sex+Time, mismodel= R ~ Drug+Time, data=imps, id=imps$ID,
+#  family="binomial", corstr="exchangeable")
 }

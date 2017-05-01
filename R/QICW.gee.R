@@ -30,7 +30,8 @@ function(model, mismodel, data, id, family, corstr) {
   
   cluster <-cluster.size(id)$n #number of observations for each subject;
   size <-cluster.size(id)$m #  sample size;
-  data$subject <- rep(1:size, cluster) #1:size; create subject variable#
+  subject= rep(1:size, cluster)
+  data$subject <- subject #1:size; create subject variable#
   fit=wgee(model,data,id,family=family,corstr=corstr,mismodel = mismodel)
   data$mu.R=fit$mu_fit
   data$weight=fit$weight
@@ -56,15 +57,15 @@ function(model, mismodel, data, id, family, corstr) {
   # Quasi Likelihood;
   index.nmiss <- which(!is.na(data$response))
   switch(family,
-         gaussian={model.R <- geeglm(model, id =data$subject, data=data, corstr=corstr, family=gaussian)
+         gaussian={model.R <- geeglm(model, id=subject, data=data, corstr=corstr, family=gaussian)
          y <- model.R$y
          quasi.R <- -1/2*sum((y-data$mu.R[index.nmiss])^2*data$weight[index.nmiss]) 
          },
-         binomial={model.R <- geeglm(model, id =data$subject, data=data, corstr=corstr, family=binomial)        	    
+         binomial={model.R <- geeglm(model, id=subject, data=data, corstr=corstr, family=binomial)        	    
          y <- model.R$y           
          quasi.R <- sum((y*log(data$mu.R[index.nmiss]/(1-data$mu.R[index.nmiss]))+log(1-data$mu.R[index.nmiss]))*data$weight[index.nmiss])
          },
-         poisson={model.R <- geeglm(model, id =data$subject, data=data, corstr=corstr, family=poisson)
+         poisson={model.R <- geeglm(model, id=subject, data=data, corstr=corstr, family=poisson)
          y <- model.R$y
          quasi.R <- sum((y*log(data$mu.R[index.nmiss])-data$mu.R[index.nmiss])*data$weight[index.nmiss])
          },
@@ -276,5 +277,5 @@ function(model, mismodel, data, id, family, corstr) {
   WQIC <- (-2)*quasi.R + 2*trace.R
   WQICu <- (-2)*quasi.R + 2*px
   # output the results;
-  return(list(QICWr=WQIC, QICWp=WQICu, Quasi_lik=quasi.R))
+  return(c(QICWr=WQIC, QICWp=WQICu, Quasi_lik=quasi.R))
 }

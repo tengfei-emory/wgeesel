@@ -34,7 +34,7 @@ a character string specifies the working correlation structure. The following ar
 }
 
 \value{
-Return a list of QIC, QIC\eqn{_{u}}{u} and Quasi-likelihood.
+Return a vector of QIC, QIC\eqn{_{u}}{u} and Quasi-likelihood.
 }
 \references{
 

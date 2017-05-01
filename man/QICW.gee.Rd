@@ -64,12 +64,12 @@ QICW\eqn{_{r}}{r} can be used for variable selection and for selecting the corre
 \examples{
 data(imps)
 
-### variable selection by QICWr
-QICW.gee(IMPS79 ~ Drug+Sex+Time, mismodel= R ~ Drug+Time, data=imps, id=imps$ID,
-         family="gaussian", corstr="exchangeable")
+### variable selection by QICWr, not rum###
+#QICW.gee(IMPS79 ~ Drug+Sex+Time, mismodel= R ~ Drug+Time, data=imps, id
+##=imps$ID, family="gaussian", corstr="exchangeable")
 
-QICW.gee(IMPS79 ~ Drug+Sex+Time+Time:Sex+Time:Drug, mismodel= R ~ Drug+Time,
-         data=imps, id=imps$ID, family="gaussian", corstr="exchangeable")
+#QICW.gee(IMPS79 ~ Drug+Sex+Time+Time:Sex+Time:Drug, mismodel= R ~ Drug+Time,
+#        data=imps, id=imps$ID, family="gaussian", corstr="exchangeable")
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

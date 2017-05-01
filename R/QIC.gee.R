@@ -9,32 +9,31 @@ function(model, data, id, family, corstr) {
   size<-cluster.size(id)$m # sample size;
   
   subject <- rep(1:size, cluster) #1:size;
-  
   ### Get the design matrix;
   data.temp <- cbind(subject,m)
   ### get rid of the missing data;
   data <- na.omit(data.temp)
   # Quasi Likelihood;
   switch(family,
-         gaussian={model.ind <- geeglm(model, id =data$subject, data=data, corstr="independence", family=gaussian)
+         gaussian={model.ind <- geeglm(model, id =subject, data=data, corstr="independence", family=gaussian)
          ### alternative correlation structure;
-         model.R <- geeglm(model, id =data$subject, data=data, corstr=corstr, family=gaussian)
+         model.R <- geeglm(model, id =subject, data=data, corstr=corstr, family=gaussian)
          #model.R <- gee(model, id =subject, data=data, corstr=corstr, family=gaussian)
          mu.R <- model.R$fitted.values
          y <- model.R$y
          scale <- as.numeric(summary(model.R)$geese$scale[1])
          quasi.R <- -1/2*sum((y-mu.R)^2/scale)
          },
-         binomial={model.ind <- geeglm(model, id =data$subject, data=data, corstr="independence", family=binomial)
+         binomial={model.ind <- geeglm(model, id =subject, data=data, corstr="independence", family=binomial)
          ### alternative correlation structure;
-         model.R <- geeglm(model, id =data$subject, data=data, corstr=corstr, family=binomial)
+         model.R <- geeglm(model, id =subject, data=data, corstr=corstr, family=binomial)
          mu.R <- model.R$fitted.values
          y <- model.R$y
          quasi.R <- sum(y*log(mu.R/(1-mu.R))+log(1-mu.R))
          },
-         poisson={model.ind <- geeglm(model, id =data$subject, data=data, corstr="independence", family=poisson)
+         poisson={model.ind <- geeglm(model, id =subject, data=data, corstr="independence", family=poisson)
          ### alternative correlation structure;
-         model.R <- geeglm(model, id =data$subject, data=data, corstr=corstr, family=poisson)
+         model.R <- geeglm(model, id =subject, data=data, corstr=corstr, family=poisson)
          mu.R <- model.R$fitted.values
          y <- model.R$y
          quasi.R <- sum(y*log(mu.R)-mu.R)
@@ -52,5 +51,5 @@ function(model, data, id, family, corstr) {
   QIC <- (-2)*quasi.R + 2*trace.R
   QICu <- (-2)*quasi.R + 2*px
   # output the results;
-  return(list(QIC=QIC, QICu=QICu, Quasi_lik=quasi.R))
+  return(c(QIC=QIC, QICu=QICu, Quasi_lik=quasi.R))
 }
