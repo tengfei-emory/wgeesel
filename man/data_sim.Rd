@@ -37,7 +37,7 @@ coefficients associated with x_mis.
 a character string specifies the working correlation structure. The following are permitted: "independence", "exchangeable","ar1".
 }
   \item{family}{
-a description of the error distribution and link function to be used in the model. This is a character string naming a family function. The following are permitted: "gaussian", "binomial", "poisson".
+a description of the error distribution and link function to be used in the model. This is a character string naming a family function. The following are permitted: "gaussian", "binary", "poisson".
 }
   \item{lag_level}{
 specify how many lags of response y will affect missing probability.

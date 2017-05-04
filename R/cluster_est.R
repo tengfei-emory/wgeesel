@@ -1,6 +1,7 @@
 cluster_est <-
 function(x_i,y_i,w_i,beta,rho,phi,corstr,family){
   mat_est=list()
+ 
   non_missing_length=length(na.omit(y_i))
   if(family=="binomial"){
     mu_i=exp(x_i%*%beta)/(1+exp(x_i%*%beta))
@@ -30,7 +31,7 @@ function(x_i,y_i,w_i,beta,rho,phi,corstr,family){
     R_i=rho^H
   }
   V_i=phi*(sqrt(S_i)%*%R_i%*%sqrt(S_i))
-  mat_est[[1]]=(t(D_i)%*%solve(V_i)%*%W_i)[,1:non_missing_length]%*%(y_i-mu_i)[1:non_missing_length]
+  mat_est[[1]]=(t(D_i)%*%solve(V_i)%*%W_i)[,1:non_missing_length]%*%as.matrix((y_i-mu_i)[1:non_missing_length],ncol=1)
   mat_est[[2]]=t(D_i)%*%solve(V_i)%*%D_i
   return(mat_est)
 }

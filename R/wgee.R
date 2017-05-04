@@ -29,8 +29,10 @@ wgee<-function(model,data,id,family,corstr,scale=NULL,mismodel=NULL){
     })
     weight=unlist(adjusted_w)
   }
+  
   if(is.list(mismodel)){weight=rep(1,length(y))}
   fit=newton_raphson(id,x,y,weight=weight,scale=scale,corstr=corstr,family=family)
+
   beta_est=fit$beta_new
   rownames(beta_est)=colnames(x)
 
@@ -68,6 +70,6 @@ wgee<-function(model,data,id,family,corstr,scale=NULL,mismodel=NULL){
   # print(summary(mis_fit)$coefficients)
   cat("---\n")
   cat("Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 \n")
-  final_res=list(beta=beta_est,var=var,mu_fit=mu_fit,scale=scale,rho=fit$rho,weight=weight,model=model,x=x,y=y,mis_fit=mis_fit)
+  final_res=list(beta=beta_est,var=variance,mu_fit=mu_fit,scale=scale,rho=fit$rho,weight=weight,model=model,x=x,y=y,mis_fit=mis_fit)
   invisible(final_res)
 }

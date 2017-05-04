@@ -1,4 +1,4 @@
-632ec94e1958fab78079212d283e6ee0 *DESCRIPTION
+b89fa2c54dafda3c29a4d010ca54b9df *DESCRIPTION
 79aa34d7f280e2497aed527a1289de77 *NAMESPACE
 cc58ee12e8665492bc1d45c93143d419 *R/E_i_est.R
 9b6154e9d33e541cc78d85c770194b3a *R/MLIC.gee.R
@@ -11,7 +11,7 @@ e3d351b3a85d30e06e276ca2f408945f *R/RJ.gee.R
 809e413ac9019c9b27642b97381ebdee *R/WRsquare.gee.R
 8a70a1d5fb631512f92d6b3d3a057823 *R/binary_fun.R
 6dda46cbf2b524ccf1f666a61e24bba3 *R/cluster.size.R
-1bfe8295dc393518fbc400a202e0b01f *R/cluster_est.R
+68f0bd6ba4135041a39a872fc0b653e7 *R/cluster_est.R
 fa184301ca0a50a11668804a50ab94c0 *R/cont_fun.R
 85ee75cf02736ebf4c0338dbe698aa5c *R/cormax.ar1.R
 e66a46b49fd291d410bd6918ab662ceb *R/cormax.exch.R
@@ -22,8 +22,8 @@ e66a46b49fd291d410bd6918ab662ceb *R/cormax.exch.R
 b7babe9a1ad6387b963bc2fef611c624 *R/mat.prod.R
 611292d11d2173dcb46d01e29332cfe8 *R/newton_raphson.R
 f0e04c0c092e1d10f5adcdef2dc2a705 *R/phi_con_str_est.R
-8084b104669339f3e88569d94af108a7 *R/us_matrix.R
-4b30609ad227360cf66a1077db5c2aa3 *R/wgee.R
+5cfac5913553574a13d5f8efb0920770 *R/us_matrix.R
+d1ca44ae5947f8b62b653539283475a0 *R/wgee.R
 ee7bef8aba1d4b6f37a5050148059565 *R/wgeems-internal.R
 45cd0516fc68d107926909060d9a5144 *R/ylag.R
 f4579b100296f8c737163afc144c2ee8 *data/imps.RData
@@ -36,7 +36,7 @@ a06c604554e3b04dc4c0382c88f316b5 *man/QICW.gee.Rd
 71d4c6ee9534049b08a1a8820d39d8c2 *man/RJ.gee.Rd
 370d45f94edddef03696c5fc865eba47 *man/RJ2.gee.Rd
 13b6be066da583a26133438c1809c532 *man/WRsquare.Rd
-dbe97f8da923f1684c6369f3b8e669d7 *man/data_sim.Rd
+493afed831a82d3c6016947a1664e554 *man/data_sim.Rd
 bc35e65961e57aebf75413a8214e3dbb *man/imps.Rd
 a297e51de858d692a96361f685612ed6 *man/ohio.Rd
 ad8c21de95bbc0b9fa4b34a948b31d6f *man/seizure.Rd
