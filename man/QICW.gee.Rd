@@ -37,7 +37,7 @@ a character string specifies the working correlation structure. The following ar
 }
 
 \value{
-Return a list of QICW\eqn{_{r}}{r}, QICW\eqn{_{p}}{p} and Quasi-likelihood.
+Return a data frame of QICW\eqn{_{r}}{r}, QICW\eqn{_{p}}{p} and Wquasi_lik
 }
 \references{
 Gosho, M., 2015. Model selection in the weighted generalized estimating equations for longitudinal data with dropout. \emph{Biometrical Journal}.

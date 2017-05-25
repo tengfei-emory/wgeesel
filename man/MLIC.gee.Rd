@@ -40,7 +40,7 @@ a character string specifies the working correlation structure. The following ar
 }
  
 \value{
-Return a vector of MLIC, MLICC and Quasi-likelihood.
+Return a data frame of MLIC, MLICC and Wquad_loss.
 }
 
 \author{

@@ -51,5 +51,7 @@ function(model, data, id, family, corstr) {
   QIC <- (-2)*quasi.R + 2*trace.R
   QICu <- (-2)*quasi.R + 2*px
   # output the results;
-  return(c(QIC=QIC, QICu=QICu, Quasi_lik=quasi.R))
+  out <- data.frame(QIC=QIC, QICu=QICu, Quasi_lik=quasi.R)
+  return(round(out,1))
+  #return(list(QIC=QIC, QICu=QICu, Quasi_lik=quasi.R))
 }

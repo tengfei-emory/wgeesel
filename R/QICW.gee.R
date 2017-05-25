@@ -108,9 +108,9 @@ function(model, mismodel, data, id, family, corstr) {
            lam_d <- exp.x/(1+exp.x)
            row.names(m_drop)=seq(1:cluster[i])
            index_d=as.numeric(row.names(na.omit(m_drop)))
-           F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,] ) )
-             
+           index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+           F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                            mat_drop[index_d2,]) ) )      
            UF<-UF+U%*%t(F)
            FF<-FF+F%*%t(F)                                                    
            },
@@ -134,10 +134,10 @@ function(model, mismodel, data, id, family, corstr) {
            exp.x <- exp(as.matrix(mat_drop)%*%as.matrix(alpha_drop))              
            lam_d <- exp.x/(1+exp.x)
            row.names(m_drop)=seq(1:cluster[i])
-           index_d=as.numeric(row.names(na.omit(m_drop)))
-            F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,] ) )
-           
+           index_d=as.numeric(row.names(m_drop))[-1]
+           index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+           F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                   mat_drop[index_d2,]) ) )  
            UF<-UF+U%*%t(F)
            FF<-FF+F%*%t(F)    
            },
@@ -163,11 +163,9 @@ function(model, mismodel, data, id, family, corstr) {
            lam_d <- exp.x/(1+exp.x)
            row.names(m_drop)=seq(1:cluster[i])
            index_d=as.numeric(row.names(na.omit(m_drop)))
-          F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,] ) )
-             
-
-           
+           index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+           F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                            mat_drop[index_d2,]) ) )      
            UF<-UF+U%*%t(F)
            FF<-FF+F%*%t(F)      
            },
@@ -200,8 +198,9 @@ function(model, mismodel, data, id, family, corstr) {
            lam_d <- exp.x/(1+exp.x)
            row.names(m_drop)=seq(1:cluster[i])
            index_d=as.numeric(row.names(na.omit(m_drop)))
-            F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,] ) )
+           index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+           F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                            mat_drop[index_d2,]) ) )      
            
            G<-G_pre%*%F
            if (is.matrix(covariate[index,])==FALSE) {cal.m=t(t(covariate[index,]))
@@ -226,13 +225,13 @@ function(model, mismodel, data, id, family, corstr) {
            m_drop <- model.frame(model_drop, data[data$subject==i,],na.action='na.pass')
            mat_drop <- as.data.frame(model.matrix(model_drop, m_drop))
            exp.x <- exp(as.matrix(mat_drop)%*%as.matrix(alpha_drop))
-           
+          
            lam_d <- exp.x/(1+exp.x)
            row.names(m_drop)=seq(1:cluster[i])
-           index_d=as.numeric(row.names(na.omit(m_drop)))
-            F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,] ) )
-             
+           index_d=as.numeric(row.names(m_drop))[-1]
+           index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+           F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                            mat_drop[index_d2,]) ) )      
            G<-G_pre%*%F
            E<-t(D)%*%ginv(var)%*%x
            j.part<-j.part+(E-G)%*%t(E-G)
@@ -258,9 +257,10 @@ function(model, mismodel, data, id, family, corstr) {
            lam_d <- exp.x/(1+exp.x)
            row.names(m_drop)=seq(1:cluster[i])
            index_d=as.numeric(row.names(na.omit(m_drop)))
-            F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,] ) )
-            
+           index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+           F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                            mat_drop[index_d2,]) ) )      
+           
            G<-G_pre%*%F
            E<-t(D)%*%ginv(var)%*%x
            j.part<-j.part+(E-G)%*%t(E-G)
@@ -277,5 +277,7 @@ function(model, mismodel, data, id, family, corstr) {
   WQIC <- (-2)*quasi.R + 2*trace.R
   WQICu <- (-2)*quasi.R + 2*px
   # output the results;
-  return(c(QICWr=WQIC, QICWp=WQICu, Quasi_lik=quasi.R))
+  out <- data.frame(QICWr=WQIC, QICWp=WQICu, Wquasi_lik=quasi.R)
+  return(round(out,1))
+  #return(list(QICWr=WQIC, QICWp=WQICu, Wquasi_lik=quasi.R))
 }

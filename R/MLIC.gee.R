@@ -20,12 +20,12 @@ function(model, model_full, mismodel, data, id, family,corstr) {
   # mu.R  the fitted values from the candidate model based on weighted GEE
   # mu.R0   the fitted values from the full model based on weighted GEE
   # weight   the esimtate of weights based on weighted GEE (this should be 1/wij)
-  
+
   #input mu.R, mu.R0, weight, scale, rho, para_est, alpha_drop from wgee###
   m.temp <- model.frame(model_full, data, na.action='na.pass')
   if (sum(is.na(m.temp)) == 0){
     stop("This data is complete. MLIC.gee() is only for data with missingness")}
-  complete=F
+  
   if (length(id) != nrow(data)){
       stop("variable lengths differ (found for '(id)')")}
  
@@ -55,8 +55,8 @@ function(model, model_full, mismodel, data, id, family,corstr) {
   data$response <- model.response(m, "numeric")
   mat <- as.data.frame(model.matrix(model, m))
   mat$subj <- rep(unique(data$subject), cluster)
-  complete=F
-  if (complete==T) {
+  complete=FALSE
+  if (complete==TRUE) {
     ### Specify the type of the outcomes; Here requires "geepack" package;
     switch(family,
            gaussian={model.R <- geeglm(model, id=data$subject, data=data, corstr=corstr, family=gaussian)
@@ -83,7 +83,7 @@ function(model, model_full, mismodel, data, id, family,corstr) {
            stop("Warnings: Invalid type of outcomes!")
     )
     # The quasi likelihood part;
-    quasi.R <- (y-data$mu.R)%*%matrix(y-data$mu.R) 
+    quad_loss <- (y-data$mu.R)%*%matrix(y-data$mu.R) 
     
     # Trace Term (penalty for model complexity);
     h.part <- matrix(0, nrow=length(beta), ncol=length(beta)) #p by p matrix
@@ -136,10 +136,10 @@ function(model, model_full, mismodel, data, id, family,corstr) {
       )
     }	
     # missing information criteria
-    mlic <- formatC(quasi.R+2*sum(diag(ginv(h.part)%*%j.part)), digits=3, format="f") 
+    mlic <- formatC(quad_loss+2*sum(diag(ginv(h.part)%*%j.part)), digits=3, format="f") 
   } 
   
-  if (complete==F) {
+  if (complete==FALSE) {
     beta <- para_est
     h.part<-matrix(0, nrow=length(mat[1,])-1, ncol=length(mat[1,])-1) 
     UF<-matrix(0,ncol=length(alpha_drop), nrow=length(mat[1,])-1)
@@ -177,8 +177,9 @@ function(model, model_full, mismodel, data, id, family,corstr) {
              lam_d <- exp.x/(1+exp.x)
              row.names(m_drop)=seq(1:cluster[i])
              index_d=as.numeric(row.names(m_drop))[-1]
-             F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,] ),na.rm=T )
+             index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+             F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                              mat_drop[index_d2,]) ) )      
              
              UF<-UF+U%*%t(F)
              FF<-FF+F%*%t(F)                                                    
@@ -205,8 +206,10 @@ function(model, model_full, mismodel, data, id, family,corstr) {
              lam_d <- exp.x/(1+exp.x)
              row.names(m_drop)=seq(1:cluster[i])
              index_d=as.numeric(row.names(m_drop))[-1]
-             F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,],na.rm=T) )
+             index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+             F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                              mat_drop[index_d2,]) ) )      
+             
              UF<-UF+U%*%t(F)
              FF<-FF+F%*%t(F)  
              },
@@ -231,9 +234,9 @@ function(model, model_full, mismodel, data, id, family,corstr) {
              lam_d <- exp.x/(1+exp.x)
              row.names(m_drop)=seq(1:cluster[i])
              index_d=as.numeric(row.names(m_drop))[-1]
-         
-             F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,] ,na.rm=T) )
+             index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+             F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                              mat_drop[index_d2,]) ) )      
              
              UF<-UF+U%*%t(F)
              FF<-FF+F%*%t(F)      
@@ -275,9 +278,10 @@ function(model, model_full, mismodel, data, id, family,corstr) {
              lam_d <- exp.x/(1+exp.x)
              row.names(m_drop)=seq(1:cluster[i])
              index_d=as.numeric(row.names(m_drop))[-1]
-             F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,],na.rm=T ) )
-           
+             index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+             F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                              mat_drop[index_d2,]) ) )      
+             
              G<-G_pre%*%F
              if (is.matrix(covariate[index,])==FALSE) {cal.m=t(t(covariate[index,]))
              }else{cal.m=t(covariate[index,])}
@@ -304,8 +308,9 @@ function(model, model_full, mismodel, data, id, family,corstr) {
              lam_d <- exp.x/(1+exp.x)
              row.names(m_drop)=seq(1:cluster[i])
              index_d=as.numeric(row.names(m_drop))[-1]
-             F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,],na.rm=T ) )
+             index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+             F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                              mat_drop[index_d2,]) ) )      
              
              G<-G_pre%*%F
              first<-t(D)%*%ginv(var)%*%(x%*%t(x))
@@ -332,8 +337,9 @@ function(model, model_full, mismodel, data, id, family,corstr) {
              lam_d <- exp.x/(1+exp.x)
              row.names(m_drop)=seq(1:cluster[i])
              index_d=as.numeric(row.names(m_drop))[-1]
-             F= as.matrix(colSums( (m_drop[index_d-1,][,1] - m_drop[-index_d[length(index_d)],][,1]*c(lam_d[index_d-1]) )*
-                                     mat_drop[index_d-1,],na.rm=T ) )
+             index_d2=seq(1:cluster[i])[-length(seq(1:cluster[i]))]
+             F= as.matrix(colSums( na.omit( (m_drop[index_d,][,1]* mat_drop[index_d,]- c(lam_d[index_d])*mat_drop[index_d,] )*
+                                              mat_drop[index_d2,]) ) )      
              
              G<-G_pre%*%F
              first<-t(D)%*%ginv(var)%*%(x%*%t(x))
@@ -346,12 +352,14 @@ function(model, model_full, mismodel, data, id, family,corstr) {
     }
     # The quasi likelihood part;
     index.nmiss <- which(!is.na(data$response))
-    quasi.R <- (data$response[index.nmiss]-data$mu.R[index.nmiss])%*%diag(c(data$weight[index.nmiss]))%*%matrix(data$response[index.nmiss]-data$mu.R[index.nmiss]) 
+    quad_loss <- (data$response[index.nmiss]-data$mu.R[index.nmiss])%*%diag(c(data$weight[index.nmiss]))%*%matrix(data$response[index.nmiss]-data$mu.R[index.nmiss]) 
     # missing information criteria: mlic
-    mlic <- formatC(quasi.R+2*sum(diag(ginv(h.part)%*%j.part)), digits=3, format="f")
+    mlic <- formatC(quad_loss+2*sum(diag(ginv(h.part)%*%j.part)), digits=3, format="f")
     # missing informaiton criteria for correlation structure: mlicc
-    mlicc <- formatC(quasi.R+2*sum(diag(ginv(h.part)%*%k.part)), digits=3, format="f")
+    mlicc <- formatC(quad_loss+2*sum(diag(ginv(h.part)%*%k.part)), digits=3, format="f")
   }
   # output the results;
-  return(c(MLIC=mlic, MLICc=mlicc, Quasi_lik=quasi.R))
+  out <- data.frame(MLIC=as.numeric(mlic), MLICc=as.numeric(mlicc), Wquad_loss=as.numeric(quad_loss))
+  return(round(out,1))
+  #return(c(MLIC=mlic, MLICc=mlicc, Wquad_loss=quad_loss))
 }
