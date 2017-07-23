@@ -1,5 +1,10 @@
 RJ.gee <-
-function(model,data,id,family,corstr){
+function(object){
+  model=object$model
+  data=object$data
+  id=object$id
+  corstr=object$corstr
+  family=object$family
   
   ####beta is model estimates###
   if (length(id) != nrow(data)){
@@ -9,25 +14,25 @@ function(model,data,id,family,corstr){
   size <- cluster.size(id)$m # sample size;
   subject <- rep(1:size, cluster) #1:size; create subject variable 
   
-  data.temp <- cbind(subject,m.temp) #combine the design matrix and subject varible
+  data.temp <- cbind(subject=subject,m.temp) #combine the design matrix and subject varible
   ### get rid of the missing data;
   data <- na.omit(data.temp)
-  
+  subject=data$subject
   ### Get the design matrix after removing the missing data
   m <- model.frame(model, data, na.action='na.pass')
   data$response <- model.response(m, "numeric")
-  cluster <- cluster.size(data$subject)$n #number of observations for each subject;
+  cluster <- cluster.size(subject)$n #number of observations for each subject;
   nsubj <- max(cluster)
-  size <- cluster.size(data$subject)$m # sample size;
+  size <- cluster.size(subject)$m # sample size;
   mat <- as.data.frame(model.matrix(model, m)) #covariate matrix with intercept
-  mat$subj <- rep(unique(data$subject), cluster)
+  mat$subj <- rep(unique(subject), cluster)
   
   switch(family,
-         gaussian={model.R <- geeglm(model, id =data$subject, data=data, corstr=corstr, family=gaussian)
+         gaussian={model.R <- geeglm(model, id =subject, data=data, corstr=corstr, family=gaussian)
          },
-         binomial={model.R <- geeglm(model, id =data$subject, data=data, corstr=corstr, family=gaussian)
+         binomial={model.R <- geeglm(model, id =subject, data=data, corstr=corstr, family=gaussian)
          },
-         poisson={model.R <- geeglm(model, id =data$subject, data=data, corstr=corstr, family=gaussian)
+         poisson={model.R <- geeglm(model, id =subject, data=data, corstr=corstr, family=gaussian)
          },
          stop("Warnings: Invalid type of outcomes!")
   )
@@ -41,7 +46,7 @@ function(model,data,id,family,corstr){
   len <- length(beta)
   step11<-matrix(0, nrow=len, ncol=len)
   for (i in 1:size){
-    covariate<-as.matrix(subset(mat[,-length(mat[1,])], mat$subj==unique(data$subject)[i]))
+    covariate<-as.matrix(subset(mat[,-length(mat[1,])], mat$subj==unique(subject)[i]))
     var_i<-var[1:cluster[i],1:cluster[i]]
     nsubj_i <- cluster[i]
     switch(
@@ -67,8 +72,8 @@ function(model,data,id,family,corstr){
   step12<-matrix(0,nrow=len,ncol=len)
   for (i in 1:size){
     nsubj_i <- cluster[i]
-    y_i<-as.matrix(data[data$subject==i,]$response)
-    covariate<-as.matrix(subset(mat[,-length(mat[1,])], mat$subj==unique(data$subject)[i]))
+    y_i<-as.matrix(data[subject==i,]$response)
+    covariate<-as.matrix(subset(mat[,-length(mat[1,])], mat$subj==unique(subject)[i]))
     var_i<-var[1:cluster[i],1:cluster[i]]
     switch(
       family,

@@ -1,5 +1,5 @@
 MLIC.gee <-
-function(model, model_full, mismodel, data, id, family,corstr) {
+function(object, object_full) {
   #########################################################################
   # Arguments: mu.R, mu.R0, weight, scale and rho are extracted from macro GEE
   # model    specify the model of interest
@@ -22,36 +22,40 @@ function(model, model_full, mismodel, data, id, family,corstr) {
   # weight   the esimtate of weights based on weighted GEE (this should be 1/wij)
 
   #input mu.R, mu.R0, weight, scale, rho, para_est, alpha_drop from wgee###
-  m.temp <- model.frame(model_full, data, na.action='na.pass')
+  m.temp <- model.frame(object_full$model, object_full$data, na.action='na.pass')
   if (sum(is.na(m.temp)) == 0){
     stop("This data is complete. MLIC.gee() is only for data with missingness")}
   
-  if (length(id) != nrow(data)){
+  if (length(object$id) != nrow(object$data)){
       stop("variable lengths differ (found for '(id)')")}
  
-  fit=wgee(model,data,id,family=family,corstr=corstr,mismodel=mismodel)
-  weight=fit$weight
-  full_fit=wgee(model_full,data,id,family=family,corstr=corstr,mismodel=mismodel)
-  data$mu.R=fit$mu_fit
-  data$mu.R0=full_fit$mu_fit
-  data$weight=fit$weight
-  model=fit$model
-  model_full=full_fit$model
-  model_drop=fit$mis_fit$formula
+  data=object$data
+  weight=object$weight
+  data$mu.R=object$mu_fit
+  data$mu.R0=object_full$mu_fit
+  data$weight=object$weight
+  model=object$model
+  model_full=object_full$model
+  model_drop=object$mis_fit$formula
+ 
+  mismodel=object$mismodel
+  corstr=object$corstr
+  family=object$family
   
-  para_est=as.vector(fit$beta)
-  alpha_drop=as.vector(coef(fit$mis_fit))
-  scale=fit$scale
-  rho=fit$rho
-  init <- model.frame(model, data)
+  
+  para_est=as.vector(object$beta)
+  alpha_drop=as.vector(coef(object$mis_fit))
+  scale=object$scale
+  rho=object$rho
+  init <- model.frame(model, object$data)
   init$num <- 1:length(init[,1])
   
-  cluster <-cluster.size(id)$n #number of observations for each subject;
-  size <-cluster.size(id)$m #  sample size;
+  cluster <-cluster.size(object$id)$n #number of observations for each subject;
+  size <-cluster.size(object$id)$m #  sample size;
   data$subject <- rep(1:size, cluster) #1:size; create subject variable#
   
   ### Get the design matrix;
-  m <- model.frame(model, data, na.action='na.pass')
+  m <- model.frame(object$model, object$data, na.action='na.pass')
   data$response <- model.response(m, "numeric")
   mat <- as.data.frame(model.matrix(model, m))
   mat$subj <- rep(unique(data$subject), cluster)

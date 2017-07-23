@@ -9,27 +9,11 @@ QIC and QICu for GEE
 Calculate quasi-likelihood under the independence model criterion (QIC) and QIC\eqn{_{u}}{u} based on GEE.
 }
 \usage{
-QIC.gee(model, data, id, family, corstr)
+QIC.gee(object)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{model}{
-a object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. 
-}
-  \item{data}{
-a data frame containing the variables in the model.
-}
-  \item{id}{
-a vector which identifies the clusters. The length of ‘id’ should be the same as
-the number of observations. Data are assumed to be sorted so that observations
-on a cluster are contiguous rows for all entities in the formula.
-}
-  \item{family}{
-a description of the error distribution and link function to be used in the model. This is a character string naming a family function. The following are permitted: "gaussian", "binomial", "poisson".
-}
-  \item{corstr}{
-a character string specifies the working correlation structure. The following are permitted:
-"independence", "exchangeable", "ar1".
+  \item{object}{a fitted model object of class \code{"wgee"}.
 }
 }
 
@@ -56,19 +40,22 @@ QIC can be used to select the best correlation structure and the best fitting mo
 }
 
 \examples{
-
 data(imps)
-QIC.gee(Y ~ Drug+Sex+Time, data=imps, id=imps$ID, family="binomial", corstr="exchangeable")
+fit <- wgee(Y ~ Drug+Sex+Time, data=imps, id=imps$ID, family="binomial",
+            corstr="exchangeable")
+
+QIC.gee(fit)
 
 data(seizure)
 ###reshapre the seizure data to "long" format
-
 seiz.long <- reshape(seizure, varying=list(c("base","y1", "y2", "y3", "y4")),
                       v.names="y", times=0:4, direction="long")
 seiz.long <- seiz.long[order(seiz.long$id, seiz.long$time),]
 
-QIC.gee(y ~ age + trt + time, data=seiz.long, id=seiz.long$id, family="poisson",
-        corstr="independence")
+fit <- wgee(y ~ age + trt + time, data=seiz.long, id=seiz.long$id, 
+            family="poisson", corstr="independence")
+
+QIC.gee(fit)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

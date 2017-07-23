@@ -15,7 +15,7 @@ Weighted Generalized estimating equations (WGEE) is an extension of generalized 
 The collection of functions includes:
 \describe{
 \item{\code{\link{wgee}}}{estimates parameters based on WGEE in
-mean, scale, and correlation structures, through mean link, scale link, and correlation link}.
+mean, scale, and correlation structures, through mean link, scale link, and correlation link.}
 
 \item{\code{\link{QIC.gee}}, \code{\link{MQIC.gee}}, \code{\link{RJ.gee}}}{calculate the QIC (QIC\eqn{_{u}}{u}), MQIC (MQIC\eqn{_{u}}{u}), Rotnitzky-Jewell criteria for variable selection in the mean model and/or selection of a working correlation structure in GEE (unbalanced data is allowed).}
 
@@ -61,13 +61,7 @@ GEE methods exist for \code{\link[geepack]{geeglm}} (\pkg{geepack})
 \examples{
 data(imps)
 
-fit <- wgee (Y ~ Drug+Sex+Time,data=imps,id=imps$ID,family="binomial",
-  corstr="exchangeable",scale=NULL,mismodel= R ~ Drug+Time)
+fit <- wgee(Y ~ Drug+Sex+Time,data=imps,id=imps$ID,family="binomial",
+            corstr="exchangeable",scale=NULL,mismodel= R ~ Drug+Time)
 
-#MLIC.gee(Y ~ Drug+Sex+Time, model_full=Y ~ Drug+Sex+Time+Time*Sex+Time*Drug,
-#  mismodel= R ~ Drug+Time, data=imps,id=imps$ID, family="binomial",
-#  corstr="exchangeable")
-  
-#QICW.gee(Y ~ Drug+Sex+Time, mismodel= R ~ Drug+Time, data=imps, id=imps$ID,
-#  family="binomial", corstr="exchangeable")
 }

@@ -10,33 +10,17 @@ criterion) for selection of mean model, and the MLICC (missing longitudinal info
 criterion) for selection of working correlation structure, based on the expected quadratic loss and the WGEE.
 }
 \usage{
-MLIC.gee(model, model_full, mismodel, data, id, family, corstr)
+MLIC.gee(object,object_full)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{model}{
-an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. 
+  \item{object}{
+a fitted model object of class \code{"wgee"}.
 }
-  \item{model_full}{
-an object of class "formula" (or one that can be coerced to that class): a symbolic description of the largest candidate model under consideration to be fitted. 
+ \item{object_full}{
+a fitted model object of class \code{"wgee"}: the largest candidate model under consideration to be fitted. 
 }
-  \item{mismodel}{
-an object of class "formula" (or one that can be coerced to that class): a symbolic description of the missingness model to be fitted. 
-}
-  \item{data}{a data frame containing the variables in the model.
-}
-  \item{id}{
-a vector which identifies the clusters. The length of "id" should be the same as
-the number of observations. Data are assumed to be sorted so that observations
-on a cluster are contiguous rows for all entities in the formula.
-}
-  \item{family}{
-a description of the error distribution and link function to be used in the model. This is a character string naming a family function. The following are permitted: "gaussian", "binomial", "poisson".
-}
-  \item{corstr}{
-a character string specifies the working correlation structure. The following are permitted:
-"independence", "exchangeable", "ar1".
-}
+
 }
  
 \value{
@@ -64,28 +48,13 @@ MLIC and MLICC model selection criterion for longitudinal data criterion with dr
 
 \examples{
 data(imps)
+fit1 <- wgee (Y ~ Drug+Sex+Time,data=imps,id=imps$ID,family="binomial",
+             corstr="exchangeable",scale=NULL,mismodel= R ~ Drug+Time)
 
-###create the lag variable of Y
-ylag.list <- lapply(unique(imps$ID),function(x){idx=which(imps$ID==x)
-ylag=c(NA,imps$Y[idx][1:(length(idx)-1)])})
-imps$ylag <- unlist(ylag.list)
-
-###fit WGEE
-fit <- wgee(Y ~ Drug+Sex+Time, data=imps, id=imps$ID, family="binomial",
-            corstr="exchangeable", scale=NULL, mismodel= R ~ Drug+Time)
-
-### variable selection by MLIC
-#MLIC.gee(Y ~ Drug+Time, Y ~ Drug+Sex+Time+Time:Drug+Time:Sex,
-#         mismodel= R ~ Drug+Time+ylag, data=imps, id=imps$ID,family="binomial",
-#         corstr="ar1")
-
-#MLIC.gee(Y ~ Drug+Sex+Time, Y ~ Drug+Sex+Drug:Sex+Time:Drug+Time:Sex, 
-#         mismodel= R ~ Drug+Time+ylag, data=imps, id=imps$ID, family="binomial",
-#         corstr="ar1")
-
-#MLIC.gee(Y ~ Drug+Sex+Time+Drug:Sex, Y ~ Drug+Sex+Drug:Sex+Time:Drug+Time:Sex,
-#         mismodel= R ~ Drug+Time+ylag, data=imps, id=imps$ID, family="binomial",
-#         corstr="ar1")
+fit_f <- wgee (Y ~ Drug+Sex+Time+Time*Sex+Time*Drug,data=imps,id=imps$ID, family="binomial",
+              corstr="exchangeable",scale=NULL,mismodel= R ~ Drug+Time)
+###not run#####
+##MLIC.gee(fit1,fit_f)
 
 }
 

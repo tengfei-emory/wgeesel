@@ -1,4 +1,5 @@
 wgee<-function(model,data,id,family,corstr,scale=NULL,mismodel=NULL){
+  call <- match.call()
   m=model.frame(model,data,na.action="na.pass")
   y=model.response(m,"numeric")
   x=model.matrix(model,m)
@@ -28,9 +29,7 @@ wgee<-function(model,data,id,family,corstr,scale=NULL,mismodel=NULL){
       return(res)
     })
     weight=unlist(adjusted_w)
-  }
   
-  if(is.list(mismodel)){weight=rep(1,length(y))}
   fit=newton_raphson(id,x,y,weight=weight,scale=scale,corstr=corstr,family=family)
 
   beta_est=fit$beta_new
@@ -52,24 +51,55 @@ wgee<-function(model,data,id,family,corstr,scale=NULL,mismodel=NULL){
   sum_US_SS_i=Reduce("+",US_i)%*%solve(Reduce("+",SS_i))
   variance=V_w_est(id,U_i,logit_S_i,sum_US_SS_i,D_i,W_i,V_i)
   mu_fit=exp(x%*%beta_est)/(1+exp(x%*%beta_est))
-  se=sqrt(diag(variance))
-  p_value=pchisq((beta_est/se)^2,1,lower.tail = F)
-  sig=rep(" ",length(p_value))
-  sig[p_value<=0.0001]="***"
-  sig[p_value>0.0001&p_value<=0.001]="**"
-  sig[p_value>0.001&p_value<=0.01]="*"
-  sig[p_value>0.01&p_value<=0.05]="."
-  summary_table=data.frame(est=beta_est,se=se,z_val=abs(beta_est)/se,p_value=p_value,sig)
-  colnames(summary_table)=c("Estimate", "Std. Error", "z value", "Pr(>|z|)","")
-  print(model)
-  cat("\n")
-  print(summary_table)
-  # cat("\n")
-  # print(mismodel)
-  # cat("\n")
-  # print(summary(mis_fit)$coefficients)
-  cat("---\n")
-  cat("Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 \n")
-  final_res=list(beta=beta_est,var=variance,mu_fit=mu_fit,scale=scale,rho=fit$rho,weight=weight,model=model,x=x,y=y,mis_fit=mis_fit)
-  invisible(final_res)
+  final_res=list(beta=beta_est,var=variance,mu_fit=mu_fit,scale=scale,rho=fit$rho,weight=weight,model=model,x=x,y=y,mis_fit=mis_fit,call=call,id=id,data=data,family=family,corstr=corstr)
+  }
+  if(is.null(mismodel)){
+   
+   data$id=id
+   fit=geeglm(model,data=data,id=id,family=family,corstr = corstr,scale.fix = !is.null(scale))
+   final_res=list(beta=fit$geese$beta,var=fit$geese$vbeta,mu_fit=fit$fitted.values,scale=fit$geese$gamma,rho=fit$geese$alpha,weight=rep(1,nrow(data)),model=model,x=x,y=y,mis_fit=NA,call=call,id=id,data=data,family=family,corstr=corstr)
+   
+  }
+  class(final_res)=c("wgee") 
+  return(final_res)
 }
+
+print.wgee <- function(x, ...){
+  cat("Call:\n")
+  print(x$call)
+  cat("\n", "Coefficients:", "\n")
+  print(t(x$beta))
+  cat("\n Scale Parameter: ", signif(x$scale, digits=4), "\n")
+  cat("\n Estimated Correlation Parameter: ", signif(x$rho, digits=4), "\n")
+}
+
+summary.wgee<- function(object, ...)  {
+  Coefs <- matrix(NA,nrow=length(object$beta),ncol=4)
+  Coefs[,1] <- c(object$beta)
+  Coefs[,2] <- sqrt(diag(object$var))
+  Coefs[,3] <- Coefs[,1]/Coefs[,2]
+  Coefs[,4] <- round(2*pnorm(abs(Coefs[,3]), lower.tail=F), digits=8)
+  colnames(Coefs) <- c("Estimates","Robust SE", "z value", "Pr(>|z|)")
+  coefnames<-rownames(object$beta)
+  summ <- list(beta = Coefs[,1],se.robust = Coefs[,2], wald.test = Coefs[,3], p = Coefs[,4],
+               corr = object$rho, phi = object$scale, call=object$call,coefnames=coefnames)
+  class(summ) <- 'summary.wgee'
+  return(summ)
+}
+
+print.summary.wgee<- function(x,digits = max(3, getOption("digits") - 3), ...){
+  cat("Call:\n")
+  print(x$call)
+  cat("\n")
+  Coefs <- matrix(0,nrow=length(x$beta),ncol=4)
+  rownames(Coefs) <- c(x$coefnames)
+  colnames(Coefs) <- c("Estimates","Robust SE", "z value", "Pr(>|z|)")
+  Coefs[,1] <- x$beta
+  Coefs[,2] <- x$se.robust
+  Coefs[,3] <- x$wald.test
+  Coefs[,4] <- x$p
+  printCoefmat(as.matrix(Coefs), digits = digits) ## Thanks, Achim
+  cat("\n Estimated Correlation Parameter: ", signif(x$corr, digits=4), "\n")
+  cat("Estimated Scale Parameter: ", signif(x$phi, digits=4), "\n")
+}
+

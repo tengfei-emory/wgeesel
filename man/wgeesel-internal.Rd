@@ -14,6 +14,8 @@
 \alias{count_fun}
 \alias{cs_con_str_est}
 \alias{phi_con_str_est}
+\alias{print.wgee}
+\alias{summary.wgee}
 \title{Internal wgeesel Functions}
 \description{
   Internal \pkg{wgeesel} functions.

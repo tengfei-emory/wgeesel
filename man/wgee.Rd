@@ -52,6 +52,12 @@ an object of class "formula" (or one that can be coerced to that class): a symbo
 \item{x}{covariates in WGEE}
 \item{y}{response in WGEE}
 \item{mis_fit}{esimates of the missingness model}
+\item{call}{the function to be called}
+\item{id}{as input}
+\item{data}{as input}
+\item{family}{as input}
+\item{corstr}{as input}
+
 }
 \references{
 
@@ -77,9 +83,8 @@ Zheng Li, Cong Xu and Ming Wang
 ####Example1
 data(imps)
 
-fit <- wgee(IMPS79 ~ Drug+Sex+Time, data=imps, id=imps$ID, 
-family="gaussian",corstr="exchangeable", scale=NULL, 
-mismodel= R ~ Drug+Time)
+fit <- wgee(IMPS79 ~ Drug+Sex+Time, data=imps, id=imps$ID, family="gaussian",
+            corstr="exchangeable", scale=NULL, mismodel= R ~ Drug+Time)
 
 #####Example2
 data(seizure)
@@ -111,9 +116,8 @@ seiz.long <- cbind(seiz.long,R=unlist(R))[-remove_idx,]
 seiz.long$y_mis <- ifelse(seiz.long$R,seiz.long$y,NA)
 
 ###fit WGEE, not run ###
-fit <- wgee(y_mis ~ age + trt + time, data=seiz.long, id=seiz.long$id,
-family="poisson",corstr="exchangeable", 
-scale=NULL, mismodel= R ~ age)
+fit <- wgee(y_mis ~ age + trt + time, data=seiz.long, id=seiz.long$id,family="poisson",
+            corstr="exchangeable",scale=NULL, mismodel= R ~ age)
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

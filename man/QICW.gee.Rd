@@ -9,35 +9,15 @@ QICWr and QICWp for WGEE
 Calculate the QICW\eqn{_{r}}{r} and QICW\eqn{_{p}}{p} (an information criterion based on the weighted quasi-likelihood function) for selection of mean model and correlation structure based on the WGEE.
 }
 \usage{
-QICW.gee(model, mismodel, data, id, family, corstr)
+QICW.gee(object)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{model}{
-an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. 
-}
-  \item{mismodel}{
-an object of class "formula" (or one that can be coerced to that class): a symbolic description of the missingness model to be fitted. 
-}
-  \item{data}{
-a data frame containing the variables in the model.
-}
-  \item{id}{
-a vector which identifies the clusters. The length of "id" should be the same as
-the number of observations. Data are assumed to be sorted so that observations
-on a cluster are contiguous rows for all entities in the formula.
-}
-  \item{family}{
-a description of the error distribution and link function to be used in the model. This is a character string naming a family function. The following are permitted: "gaussian", "binomial", "poisson".
-}
-  \item{corstr}{
-a character string specifies the working correlation structure. The following are permitted:
-"independence", "exchangeable", "ar1".
-}
+  \item{object}{a fitted model object of class \code{"wgee"}.}
 }
 
 \value{
-Return a data frame of QICW\eqn{_{r}}{r}, QICW\eqn{_{p}}{p} and Wquasi_lik
+Return a data frame of QICW\eqn{_{r}}{r}, QICW\eqn{_{p}}{p} and Wquasi_lik.
 }
 \references{
 Gosho, M., 2015. Model selection in the weighted generalized estimating equations for longitudinal data with dropout. \emph{Biometrical Journal}.
@@ -65,11 +45,13 @@ QICW\eqn{_{r}}{r} can be used for variable selection and for selecting the corre
 data(imps)
 
 ### variable selection by QICWr, not rum###
-#QICW.gee(IMPS79 ~ Drug+Sex+Time, mismodel= R ~ Drug+Time, data=imps, id
-##=imps$ID, family="gaussian", corstr="exchangeable")
+#fit <- wgee(IMPS79 ~ Drug+Sex+Time, mismodel= R ~ Drug+Time, data=imps,
+##           id=imps$ID, family="gaussian", corstr="exchangeable")
+##QICW.gee(fit)
 
-#QICW.gee(IMPS79 ~ Drug+Sex+Time+Time:Sex+Time:Drug, mismodel= R ~ Drug+Time,
+#fit <- wgee(IMPS79 ~ Drug+Sex+Time+Time:Sex+Time:Drug, mismodel= R ~ Drug+Time,
 #        data=imps, id=imps$ID, family="gaussian", corstr="exchangeable")
+##QICW.gee(fit)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

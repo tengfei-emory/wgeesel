@@ -9,27 +9,12 @@ RJC for GEE
 Calculate RJC (Rotnitzky-Jewell information criterion) based on GEE. 
 }
 \usage{
-RJ.gee(model, data, id, family, corstr)
+RJ.gee(object)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{model}{
-an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
-}
-  \item{data}{
-a data frame containing the variables in the model.
-}
-  \item{id}{
-a vector which identifies the clusters. The length of "id" should be the same as
-the number of observations. Data are assumed to be sorted so that observations
-on a cluster are contiguous rows for all entities in the formula.
-}
-  \item{family}{
-a description of the error distribution and link function to be used in the model. This is a character string naming a family function. The following are permitted: "gaussian", "binomial", "poisson".
-}
-  \item{corstr}{
-a character string specifies the working correlation structure. The following are permitted:
-"independence", "exchangeable", "ar1".
+  \item{object}{
+a fitted model object of class \code{"wgee"}.
 }
 }
 \details{
@@ -51,11 +36,11 @@ Cong Xu, Zheng Li and Ming Wang
 \examples{
 data(ohio)
 
-RJ.gee(resp ~ age + smoke+age:smoke, data=ohio, id=ohio$id, family="binomial", 
-       corstr="exchangeable")
+fit <- wgee(resp ~ age + smoke+age:smoke, data=ohio, id=ohio$id, 
+            family="binomial", corstr="exchangeable")
        
-RJ.gee(resp ~ age + smoke+age:smoke, data=ohio, id=ohio$id, family="binomial", 
-       corstr="ar1")
+RJ.gee(fit)
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

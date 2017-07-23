@@ -9,26 +9,11 @@ Corrected RJC for GEE
 Calculate corrected RJC (Rotnitzky-Jewell information criterion) based on GEE with a modified robust variance estimator. 
 }
 \usage{
-RJ2.gee(model, data, id, family, corstr)
+RJ2.gee(object)
 }
 \arguments{
-  \item{model}{
-an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
-}
-  \item{data}{
-a data frame containing the variables in the model.
-}
-  \item{id}{
-a vector which identifies the clusters. The length of "id" should be the same as
-the number of observations. Data are assumed to be sorted so that observations
-on a cluster are contiguous rows for all entities in the formula.
-}
-  \item{family}{
-a description of the error distribution and link function to be used in the model. This is a character string naming a family function. The following are permitted: "gaussian", "binomial", "poisson".
-}
-  \item{corstr}{
-a character string specifies the working correlation structure. The following are permitted:
-"independence", "exchangeable", "ar1".
+  \item{object}{
+a fitted model object of class \code{"wgee"}.
 }
 }
 \value{
@@ -55,11 +40,10 @@ Cong Xu, Zheng Li and Ming Wang
 \examples{
 data(ohio)
 
-RJ2.gee(resp ~ age + smoke+age:smoke, data=ohio, id=ohio$id, family="binomial", 
-       corstr="exchangeable")
-       
-RJ2.gee(resp ~ age + smoke+age:smoke, data=ohio, id=ohio$id, family="binomial", 
-       corstr="ar1")
+fit <- wgee(resp ~ age + smoke+age:smoke, data=ohio, id=ohio$id, 
+            family="binomial",corstr="exchangeable")
+RJ2.gee(fit)       
+
 }
 \keyword{RJC}
 \keyword{gee}

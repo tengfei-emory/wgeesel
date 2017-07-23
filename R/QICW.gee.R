@@ -1,6 +1,5 @@
 QICW.gee <-
-function(model, mismodel, data, id, family, corstr) {
-
+function(object) {
   #########################################################################
   # Arguments: mu.R weight, scale and rho are extracted from macro GEE
   # data     data frame with subject variable from 1:size
@@ -22,6 +21,13 @@ function(model, mismodel, data, id, family, corstr) {
   # weight   the esimtate of weights based on weighted GEE
   
   #####weight######
+ # browser()
+  model=object$model
+  mismodel=object$mismodel
+  data=object$data
+  id=object$id
+  corstr=object$corstr
+  family=object$family
   if (length(id) != nrow(data)){
       stop("variable lengths differ (found for '(id)')")}
   m.temp <- model.frame(model, data, na.action='na.pass')
@@ -32,16 +38,16 @@ function(model, mismodel, data, id, family, corstr) {
   size <-cluster.size(id)$m #  sample size;
   subject= rep(1:size, cluster)
   data$subject <- subject #1:size; create subject variable#
-  fit=wgee(model,data,id,family=family,corstr=corstr,mismodel = mismodel)
-  data$mu.R=fit$mu_fit
-  data$weight=fit$weight
-  model=fit$model
-  model_drop=fit$mis_fit$formula
+
+  data$mu.R=object$mu_fit
+  data$weight=object$weight
+  model=object$model
+  model_drop=object$mis_fit$formula
   
-  para_est=as.vector(fit$beta)
-  alpha_drop=as.vector(coef(fit$mis_fit))
-  scale=fit$scale
-  rho=fit$rho
+  para_est=as.vector(object$beta)
+  alpha_drop=as.vector(coef(object$mis_fit))
+  scale=object$scale
+  rho=object$rho
   init <- model.frame(model, data)
   init$num <- 1:length(init[,1])
   

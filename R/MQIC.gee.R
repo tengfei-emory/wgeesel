@@ -1,6 +1,12 @@
 MQIC.gee <-
-function(model, data, id,family, corstr) {
+function(object){
   ### data information;
+  model=object$model
+  data=object$data
+  id=object$id
+  corstr=object$corstr
+  family=object$family
+  
   if (length(id) != nrow(data)){
     stop("variable lengths differ (found for '(id)')")}  
   m1 <- model.frame(model, data, na.action='na.pass')
@@ -9,7 +15,7 @@ function(model, data, id,family, corstr) {
 
   cluster<-cluster.size(data$id)$n #number of observations for each subject;
   size<-cluster.size(data$id)$m # sample size;
-  browser()
+  
   data$subject <- rep(1:size, cluster) #1:size;
   
   ### Get the design matrix;

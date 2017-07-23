@@ -8,28 +8,11 @@ MQIC and MQICu for GEE
 Calculate MQIC (Modified QIC) and MQIC\eqn{_{u}}{u}. MQIC is an asymptotic unbiased estimator of the risk function based on the independent quasi-likelihood. MQIC and original QIC may have non-negligible effect for model selection, especially when the true correlation structure completely different from the working correlation structure.
 }
 \usage{
-MQIC.gee(model, data, id, family, corstr)
+MQIC.gee(object)
 }
 
 \arguments{
-  \item{model}{
-n object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. 
-}
-  \item{id}{
-a data frame containing the variables in the model.
-}
-  \item{data}{
-a vector which identifies the clusters. The length of ‘id’ should be the same as
-the number of observations. Data are assumed to be sorted so that observations
-on a cluster are contiguous rows for all entities in the formula.
-}
-  \item{family}{
-a description of the error distribution and link function to be used in the model. This is a character string naming a family function. The following are permitted: "gaussian", "binomial", "poisson".
-}
-  \item{corstr}{
-a character string specifies the working correlation structure. The following are permitted:
-"independence", "exchangeable", "ar1".
-}
+  \item{object}{a fitted model object of class \code{"wgee"}.}
 }
 
 \value{
@@ -53,16 +36,18 @@ Cong Xu, Zheng Li and Ming Wang
 \examples{
 data(imps)
 
-MQIC.gee(IMPS79 ~ Drug+Sex+Time, data=imps,id=imps$ID,family="gaussian",
-         corstr="independence")
+fit <- wgee(IMPS79 ~ Drug+Sex+Time, data=imps,id=imps$ID,family="gaussian",
+             corstr="independence")
+MQIC.gee(fit)
+
 
 data(ohio)
 
-MQIC.gee(resp ~ age + smoke+age:smoke, data=ohio, id=ohio$id, family="binomial",
-         corstr="exchangeable")
+fit2 <- wgee(resp ~ age + smoke+age:smoke, data=ohio, id=ohio$id, 
+             family="binomial", corstr="independence")
+MQIC.gee(fit2)
 
-MQIC.gee(resp ~ age + smoke+age:smoke, data=ohio, id=ohio$id, family="binomial", 
-         corstr="independence")
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

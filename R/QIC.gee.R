@@ -1,6 +1,12 @@
 QIC.gee <-
-function(model, data, id, family, corstr) {
+function(object) {
 
+  model=object$model
+  data=object$data
+  id=object$id
+  corstr=object$corstr
+  family=object$family
+  
   ### data information;
   if (length(id) != nrow(data)){
     stop("variable lengths differ (found for '(id)')")}
