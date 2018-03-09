@@ -8,7 +8,7 @@ Fit Weighted Generalized Estimating Equations (WGEE)
 \code{\link{wgee}} fits weighted generalized estimating equations (WGEE) with Newton Raphson algorithm. \code{\link{wgee}} has a syntax similar to \code{\link[stats]{glm}} and returns an object similar to a \code{\link[stats]{glm}} object. 
 }
 \usage{
-wgee(model, data, id, family, corstr, scale = NULL, mismodel = NULL)
+wgee(model, data, id, family, corstr, scale = NULL, mismodel = NULL, maxit=200, tol=0.001)
 }
 \arguments{
   \item{model}{
@@ -26,13 +26,21 @@ a description of the error distribution and link function to be used in the mode
 }
   \item{corstr}{
 a character string specifies the working correlation structure. The following are permitted:
-"independence", "exchangeable", "ar1".
+"independence", "exchangeable", "ar1","unstructured".
 }
  \item{scale}{
  a numeric variable giving the value to which the scale parameter should be fixed; if NA, the scale parameter is not fixed.
  }
    \item{mismodel}{
 an object of class "formula" (or one that can be coerced to that class): a symbolic description of the missingness model to be fitted. 
+}
+
+   \item{maxit}{
+maximum iteration number for Newton-Raphson algorithm.
+}
+
+   \item{tol}{
+the tolorance for the Newton-Raphson algorithm to converge.
 }
 }
 

@@ -1,4 +1,4 @@
-wgee<-function(model,data,id,family,corstr,scale=NULL,mismodel=NULL){
+wgee<-function(model,data,id,family,corstr,scale=NULL,mismodel=NULL,maxit=200, tol=0.001){
   call <- match.call()
   m=model.frame(model,data,na.action="na.pass")
   y=model.response(m,"numeric")
@@ -30,7 +30,7 @@ wgee<-function(model,data,id,family,corstr,scale=NULL,mismodel=NULL){
     })
     weight=unlist(adjusted_w)
   
-  fit=newton_raphson(id,x,y,weight=weight,scale=scale,corstr=corstr,family=family)
+  fit=newton_raphson(id,x,y,weight=weight,scale=scale,corstr=corstr,family=family,maxit,tol)
 
   beta_est=fit$beta_new
   rownames(beta_est)=colnames(x)
@@ -54,11 +54,9 @@ wgee<-function(model,data,id,family,corstr,scale=NULL,mismodel=NULL){
   final_res=list(beta=beta_est,var=variance,mu_fit=mu_fit,scale=scale,rho=fit$rho,weight=weight,model=model,x=x,y=y,mis_fit=mis_fit,call=call,id=id,data=data,family=family,corstr=corstr)
   }
   if(is.null(mismodel)){
-   
    data$id=id
    fit=geeglm(model,data=data,id=id,family=family,corstr = corstr,scale.fix = !is.null(scale))
    final_res=list(beta=fit$geese$beta,var=fit$geese$vbeta,mu_fit=fit$fitted.values,scale=fit$geese$gamma,rho=fit$geese$alpha,weight=rep(1,nrow(data)),model=model,x=x,y=y,mis_fit=NA,call=call,id=id,data=data,family=family,corstr=corstr)
-   
   }
   class(final_res)=c("wgee") 
   return(final_res)
@@ -70,7 +68,12 @@ print.wgee <- function(x, ...){
   cat("\n", "Coefficients:", "\n")
   print(t(x$beta))
   cat("\n Scale Parameter: ", signif(x$scale, digits=4), "\n")
-  cat("\n Estimated Correlation Parameter: ", signif(x$rho, digits=4), "\n")
+  if(x$corstr=="unstructured"){
+    cat("\n Estimated Correlation: ","\n")
+    print(x$rho,digits=4)
+  }
+  else cat("\n Estimated Correlation: ", signif(x$rho, digits=4), "\n")
+  
 }
 
 summary.wgee<- function(object, ...)  {
@@ -82,7 +85,7 @@ summary.wgee<- function(object, ...)  {
   colnames(Coefs) <- c("Estimates","Robust SE", "z value", "Pr(>|z|)")
   coefnames<-rownames(object$beta)
   summ <- list(beta = Coefs[,1],se.robust = Coefs[,2], wald.test = Coefs[,3], p = Coefs[,4],
-               corr = object$rho, phi = object$scale, call=object$call,coefnames=coefnames)
+               corr = object$rho, phi = object$scale, call=object$call,coefnames=coefnames,corstr=object$corstr)
   class(summ) <- 'summary.wgee'
   return(summ)
 }
@@ -98,8 +101,13 @@ print.summary.wgee<- function(x,digits = max(3, getOption("digits") - 3), ...){
   Coefs[,2] <- x$se.robust
   Coefs[,3] <- x$wald.test
   Coefs[,4] <- x$p
-  printCoefmat(as.matrix(Coefs), digits = digits) ## Thanks, Achim
-  cat("\n Estimated Correlation Parameter: ", signif(x$corr, digits=4), "\n")
-  cat("Estimated Scale Parameter: ", signif(x$phi, digits=4), "\n")
+  printCoefmat(as.matrix(Coefs), digits = digits)
+  
+  cat("\n Estimated Scale Parameter: ", signif(x$phi, digits=4), "\n")
+  if(x$corstr=="unstructured"){
+    cat("\n Estimated Correlation: ","\n")
+    print(x$corr,digits=4)
+  }
+  else cat("\n Estimated Correlation: ", signif(x$corr, digits=4), "\n")
 }
 

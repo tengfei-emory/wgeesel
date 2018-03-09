@@ -14,7 +14,7 @@ function(x_i,y_i,w_i,beta,corstr,family){
     cons_cov=c(mu_i)
   }
   adj_factor=w_i
-  e_i=adj_factor*(y_i-mu_i)/sqrt(cons_cov)
-  std_resi=e_i%*%t(e_i)
+  e_i=(y_i-mu_i)/sqrt(cons_cov)
+  std_resi=adj_factor*e_i%*%t(e_i)
   sum(c(diag(std_resi)),na.rm=T)
 }

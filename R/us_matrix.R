@@ -28,6 +28,9 @@ us_matrix=function(x_i,y_i,w_i,beta,rho,phi,corstr,family,z_i,r_i,alpha){
     H <- abs(outer(1:length(mu_i),1:length(mu_i), "-")) 
     R_i=rho^H
   }
+  if(corstr=="unstructured"){
+    R_i=rho
+  }
   V_i=phi*(sqrt(S_i)%*%R_i%*%sqrt(S_i))
   U_i=(t(D_i)%*%solve(V_i)%*%W_i)[,1:non_missing_length]%*%as.matrix(((y_i-mu_i)[1:non_missing_length]),ncol=1)
   lam_it=exp(z_i%*%alpha)/(1+exp(z_i%*%alpha))
