@@ -38,8 +38,7 @@ function(x_i,y_i,w_i,beta,rho,phi,corstr,family){
      R_i=rho
   }
   V_i=phi*(sqrt(S_i)%*%R_i%*%sqrt(S_i))
-  print(V_i)
-  print(D_i)
+
   mat_est[[1]]=(t(D_i)%*%solve(V_i)%*%W_i)[,1:non_missing_length]%*%as.matrix((y_i-mu_i)[1:non_missing_length],ncol=1)
   mat_est[[2]]=t(D_i)%*%solve(V_i)%*%D_i
   return(mat_est)
