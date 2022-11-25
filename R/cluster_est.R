@@ -19,8 +19,11 @@ function(x_i,y_i,w_i,beta,rho,phi,corstr,family){
     cons_cov=c(exp(x_i%*%beta)) #n_i*1 matrix#
     D_i=x_i*cons_cov #n_i*p#
   }
-  S_i=diag(cons_cov) #n_i*n_i#
-  W_i=diag(w_i)
+  
+  if (length(y_i)==1) D_i = t(D_i)
+  
+  S_i=diag(cons_cov,length(y_i)) #n_i*n_i#
+  W_i=diag(w_i,length(y_i))
   if(corstr=="exchangeable"){
     R_i=diag(1,length(mu_i))+matrix(rho,ncol=length(mu_i),nrow=length(mu_i))-diag(rho,length(mu_i))
   }
@@ -35,6 +38,8 @@ function(x_i,y_i,w_i,beta,rho,phi,corstr,family){
      R_i=rho
   }
   V_i=phi*(sqrt(S_i)%*%R_i%*%sqrt(S_i))
+  print(V_i)
+  print(D_i)
   mat_est[[1]]=(t(D_i)%*%solve(V_i)%*%W_i)[,1:non_missing_length]%*%as.matrix((y_i-mu_i)[1:non_missing_length],ncol=1)
   mat_est[[2]]=t(D_i)%*%solve(V_i)%*%D_i
   return(mat_est)
